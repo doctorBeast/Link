@@ -1,7 +1,7 @@
-from Link import db
 import datetime
 from mongoengine.fields import StringField, DateTimeField, EmbeddedDocumentListField, ListField, ReferenceField, \
     EmbeddedDocument
+from mongoengine import DynamicDocument
 from Link.user.models import User
 from wtforms.validators import ValidationError
 
@@ -21,7 +21,7 @@ class Message(EmbeddedDocument):
     data = StringField(required=True)
 
 
-class ChatSession(db.DynamicDocument):
+class ChatSession(DynamicDocument):
     """Needs to have fields like Modified Date field, members, messages"""
     created_date = DateTimeField(required=True, default=datetime.datetime.now())
     modified_date = DateTimeField(required=True, default=datetime.datetime.now())

@@ -1,10 +1,9 @@
 from flask import request, Response
 from flask.views import MethodView
-from .models import ChatSession, Message
+from .models import ChatSession
 from .service import create_chat_session, update_chat_session, update_chat_session_message
 from bson import ObjectId
-from Link.user.models import User
-
+from flask_security import login_required
 
 class ChatSessionAPI(MethodView):
 
@@ -36,6 +35,7 @@ class MessageAPI(MethodView):
         messages = ChatSession.objects(id=chat_session_id).fields(slice__messages=[0, 2]).to_json()
         return Response(messages, mimetype="application/json", status=200)
 
+    @login_required
     def post(self, id):
         chat_session_id = id
         message_data = request.get_json()

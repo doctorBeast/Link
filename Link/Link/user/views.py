@@ -47,4 +47,3 @@ class UserAPI(MethodView):
         User.objects(id=id).update(**user_data)
         return '', 200
         pass
-

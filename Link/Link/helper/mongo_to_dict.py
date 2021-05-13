@@ -1,7 +1,6 @@
-from flask_mongoengine import Document
-from mongoengine.document import EmbeddedDocument
+from mongoengine.document import EmbeddedDocument, Document
 from mongoengine.fields import StringField, ListField, EmbeddedDocumentField, DictField, DateTimeField, \
-    ComplexDateTimeField, FloatField, BooleanField, IntField, ObjectIdField, DecimalField
+    ComplexDateTimeField, FloatField, BooleanField, IntField, ObjectIdField, DecimalField, ReferenceField, DBRef
 
 
 def mongo_to_dict(obj, exclude_fields=[]):
@@ -22,6 +21,9 @@ def mongo_to_dict(obj, exclude_fields=[]):
             continue
 
         data = obj._data[field_name]
+        if data is None:
+            return_data.append((field_name, data))
+            continue
 
         if isinstance(obj._fields[field_name], ListField):
             return_data.append((field_name, list_field_to_dict(data)))
@@ -64,5 +66,9 @@ def mongo_to_python_type(field, data):
         return str(data)
     elif isinstance(field, DecimalField):
         return data
+    elif isinstance(field, (DBRef, ReferenceField)):
+        return {
+            "id": str(data.id)
+        }
     else:
         return str(data)

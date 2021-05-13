@@ -9,8 +9,9 @@ verify_ssl = true
 flask = "*"
 flask-mongoengine = "*"
 pymongo = "*"
-flask-security = "*"
 bcrypt = "*"
+flask-cors = "*"
+flask-security-too = "*"
 
 [requires]
 python_version = "3.8"

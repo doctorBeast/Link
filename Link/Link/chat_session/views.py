@@ -1,13 +1,12 @@
 from flask import request, Response
 from flask.views import MethodView
-from .models import ChatSession
+from .models import ChatSession, Message
 from .service import get_all_chat_sessions, get_single_chat_session, create_chat_session, update_chat_session, \
     update_chat_session_message
 from bson import ObjectId
 from flask_security import current_user, auth_token_required
 from .serializer import ChatSessionSerializer
-from werkzeug.exceptions import BadRequest
-from Link.framework.exception import ValidationError
+from Link.framework.serializer import Serializer
 
 
 class ChatSessionAPI(MethodView):
@@ -40,6 +39,7 @@ class ChatSessionAPI(MethodView):
 
 
 class MessageAPI(MethodView):
+    serializer = Serializer(document_cls=Message)
 
     @auth_token_required
     def get(self, id):
@@ -51,5 +51,6 @@ class MessageAPI(MethodView):
     def post(self, id):
         chat_session_id = id
         message_data = request.get_json()
-        update_chat_session_message(chat_session_id, message_data)
-        return '', 200
+        message = update_chat_session_message(chat_session_id, message_data)
+        message = self.serializer.serialize(message)
+        return Response(message, mimetype="application/json", status=200)

@@ -1,4 +1,5 @@
 from mongoengine import Document
+from mongoengine.document import BaseDocument
 from mongoengine import QuerySet
 from Link.helper.mongo_to_dict import mongo_to_dict
 import json
@@ -24,7 +25,7 @@ class Serializer:
                 # add a function to do post processing functionalities.
                 self._post_processing(obj, conv_to_dict)
                 result.append(conv_to_dict)
-        elif isinstance(data, Document):
+        elif isinstance(data, BaseDocument):
             # do something
             conv_to_dict = self._to_dict(obj=data, exclude_fields=exclude_fields)
             self._post_processing(data, conv_to_dict)

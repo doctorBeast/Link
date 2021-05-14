@@ -68,4 +68,4 @@ def update_chat_session_message(eid, data):
                                                                                   modified_date=datetime.datetime.now())
     if not resp:
         raise ValidationError("Invalid Request")
-    return True
+    return message

@@ -46,7 +46,7 @@ def validate_update_chat_session_request(data):
     update_allowed_list = ChatSession.allowed_update_fields
     updated_fields = data.keys()
     check = all(field in update_allowed_list for field in updated_fields)
-    if not check:
+    if check:
         raise ValidationError("Update on following fields not allowed")
 
 
@@ -66,6 +66,8 @@ def update_chat_session_message(eid, data):
         raise ValidationError('Unauthorized Request')
     resp = ChatSession.objects.filter(id=eid, members=data.get('creator')).update(push__messages__0=message,
                                                                                   modified_date=datetime.datetime.now())
+    chat_session = ChatSession.objects().only("members").get(id=eid)
+    members = chat_session.members
     if not resp:
         raise ValidationError("Invalid Request")
-    return message
+    return message, members

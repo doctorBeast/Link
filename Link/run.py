@@ -1,3 +1,3 @@
-from Link import app
+from Link import app, socketIO
 
-app.run(debug=True)
+socketIO.run(app=app, host="0.0.0.0", debug=True)

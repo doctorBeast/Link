@@ -7,6 +7,9 @@ from bson import ObjectId
 from flask_security import current_user, auth_token_required
 from .serializer import ChatSessionSerializer
 from Link.framework.serializer import Serializer
+from flask_socketio import emit
+from Link.helper.user_sid_map import get_user_sid
+import json
 
 
 class ChatSessionAPI(MethodView):
@@ -51,6 +54,12 @@ class MessageAPI(MethodView):
     def post(self, id):
         chat_session_id = id
         message_data = request.get_json()
-        message = update_chat_session_message(chat_session_id, message_data)
+        message, members = update_chat_session_message(chat_session_id, message_data)
         message = self.serializer.serialize(message)
+        for member in members:
+            if str(message_data["creator"]) == str(member.id):
+                continue
+            sid = get_user_sid(str(member.id))
+            if sid:
+                emit('receive message', {"chat_session": chat_session_id, "message": json.loads(message)}, namespace='/', room=sid)
         return Response(message, mimetype="application/json", status=200)

@@ -12,6 +12,9 @@ pymongo = "*"
 bcrypt = "*"
 flask-cors = "*"
 flask-security-too = "*"
+flask-socketio = "*"
+eventlet = "*"
+flask-caching = "*"
 
 [requires]
 python_version = "3.8"

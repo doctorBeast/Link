@@ -32,6 +32,8 @@ class ChatSession(DynamicDocument):
     type = StringField(required=True, choices=['DM', 'GROUP'], default='DM')
     messages = EmbeddedDocumentListField(required=True, document_type=Message)
 
+    allowed_update_fields = []
+
     def to_dict(self, exclude_fields=[]):
         return mongo_to_dict(self, exclude_fields)
 

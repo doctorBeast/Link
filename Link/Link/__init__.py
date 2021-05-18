@@ -5,13 +5,20 @@ from flask_security import Security, MongoEngineUserDatastore
 from Link.user.auth_forms import ExtendedRegisterForm
 from flask_mail import Mail
 from flask_cors import CORS
-
-from flask import json
 from werkzeug.exceptions import HTTPException
 from .framework.error_handler import handle_http_exception, handle_all_exception
+from flask_socketio import SocketIO
+from flask_caching import Cache
 
+config = {
+    "DEBUG": True,          # some Flask specific configs
+    "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
+    "CACHE_DEFAULT_TIMEOUT": 300
+}
 
 app = Flask(__name__)
+app.config.from_mapping(config)
+cache = Cache(app)
 CORS(app)
 app.config['MONGODB_SETTINGS'] = {'db': 'linkdb',
                                   'host': 'localhost',
@@ -31,9 +38,11 @@ app.config['MAIL_PASSWORD'] = 'password'
 app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
 mail = Mail(app)
 app.debug = True
-app.register_error_handler(HTTPException, handle_http_exception) # TODO: We can probably remove this handler
+app.register_error_handler(HTTPException, handle_http_exception)  # TODO: We can probably remove this handler
 app.register_error_handler(Exception, handle_all_exception)
+socketIO = SocketIO(app, cors_allowed_origins='*')
 
+from .socket import *
 
 db = MongoEngine(app)
 
